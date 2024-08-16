@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Square Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-oTss4+Cp4rLt1kNA4MBP+XpKmCVnVYRx1Zo3D2E8FJY=" crossorigin=""/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Grid Square Map</h1>
+    <form id="spot-form">
+        <label for="grid-square">Grid Square:</label>
+        <input type="text" id="grid-square" name="grid-square" required>
+        <label for="frequency">Frequency:</label>
+        <input type="text" id="frequency" name="frequency" required>
+        <label for="duration">Duration (hours):</label>
+        <input type="number" id="duration" name="duration" required>
+        <button type="submit">Add Spot</button>
+    </form>
+    <div id="map" style="height: 600px;"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-RcL6F23xPxZLTpkRTq7HBGzMWIQ1bEAV0eF5KhYh5A0=" crossorigin=""></script>
+    <script src="script.js" type="module"></script>
+</body>
+</html>
