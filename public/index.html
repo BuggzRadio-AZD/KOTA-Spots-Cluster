@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Map with Leaflet</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="form-container">
+    <h1>Plot Your Location</h1>
+    <form id="locationForm">
+      <label for="lat">Latitude:</label>
+      <input type="number" id="lat" name="lat" step="any" required>
+      
+      <label for="lon">Longitude:</label>
+      <input type="number" id="lon" name="lon" step="any" required>
+      
+      <label for="frequency">Frequency:</label>
+      <input type="text" id="frequency" name="frequency" required>
+      
+      <label for="duration">Duration (hours):</label>
+      <input type="number" id="duration" name="duration" step="any" required>
+      
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    // Initialize the map
+    const map = L.map('map').setView([0, 0], 2);
+
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Function to load locations from API
+    async function loadLocations() {
+      try {
+        const response = await fetch('/api/locations');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const locations = await response.json();
+        
+        locations.forEach(loc => {
+          L.marker([loc.lat, loc.lon])
+            .addTo(map)
+            .bindPopup(`<b>Frequency:</b> ${loc.frequency}<br><b>Duration:</b> ${loc.duration} hours`)
+            .openPopup();
+        });
+      } catch (error) {
+        console.error('Failed to load locations:', error);
+      }
+    }
+
+    // Load locations when the map is ready
+    loadLocations();
+
+    // Handle form submission
+    document.getElementById('locationForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const lat = parseFloat(document.getElementById('lat').value);
+      const lon = parseFloat(document.getElementById('lon').value);
+      const frequency = document.getElementById('frequency').value;
+      const duration = parseFloat(document.getElementById('duration').value);
+      
+      try {
+        const response = await fetch('/api/locations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ lat, lon, frequency, duration })
+        });
+        
+        if (response.ok) {
+          // Clear the form
+          document.getElementById('locationForm').reset();
+          
+          // Reload locations
+          loadLocations();
+        } else {
+          throw new Error('Failed to submit data');
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    });
+  </script>
+</body>
+</html>
